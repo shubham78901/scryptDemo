@@ -1,22 +1,24 @@
-import { Demo } from './src/contracts/demo';
+
+import { sha256, toByteString } from 'scrypt-ts';
+import { HelloWorld } from './src/contracts/helloWorld'
 import { getDefaultSigner, inputSatoshis } from './tests/utils/helper';
 
 (async () => {
-  try {
-    await Demo.compile();
-    const demo = new Demo(1n, 2n);
+    
+const message = 'hello world, sCrypt!'
+    await HelloWorld.compile()
+    const helloWorld = new HelloWorld(sha256(toByteString(message, true)))
 
     // connect to a signer
-    await demo.connect(getDefaultSigner());
+    await helloWorld.connect(getDefaultSigner())
 
     // contract deployment
-    const deployTx = await demo.deploy(inputSatoshis);
-    console.log('Demo contract deployed: ', deployTx.id);
+    const deployTx = await helloWorld.deploy(inputSatoshis)
+    console.log('HelloWorld contract deployed: ', deployTx.id)
 
     // contract call
-    const { tx: callTx } = await demo.methods.add(3n);
-    console.log('Demo contract `add` called: ', callTx.id);
-  } catch (error) {
-    console.error('Error:', error);
-  }
+    const { tx: callTx } = await helloWorld.methods.unlock(
+        toByteString(message, true)
+    )
+    console.log('HelloWorld contract `unlock` called: ', callTx.id)
 })();
