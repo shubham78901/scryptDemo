@@ -8,7 +8,7 @@ import { bsv } from "scryptlib/dist";
  *
  * Reminder: DO NOT USE IT IN PRODUCTION ENV.
  */
-export declare class SensiletSigner extends Signer {
+export declare class neucronSigner extends Signer {
     private readonly _privateKeys;
     private _utxoManagers;
     private splitFeeTx;
