@@ -16,60 +16,21 @@ import {
 import { PublicKey, Transaction } from 'bsv'
 import { DEFAULT_SIGHASH_TYPE } from 'scryptlib'
 import { bsv } from 'scryptlib/dist'
+import { INeucronWalletAPI } from './INeucron'
 
-interface SensiletWalletAPI {
-    isConnect(): Promise<boolean>
-    requestAccount(): Promise<string>
-    exitAccount(): void
-    signTx(options: {
-        list: {
-            txHex: string
-            address: string
-            inputIndex: number
-            scriptHex: string
-            satoshis: number
-            sigtype: number
-        }[]
-    }): Promise<{
-        sigList: Array<{ publicKey: string; r: string; s: string; sig: string }>
-    }>
-    // TODO: add rests
-    getAddress(): Promise<string>
-    getPublicKey(): Promise<string>
-    signMessage(msg: string): Promise<string>
-    getBsvBalance(): Promise<{
-        address: string
-        balance: { confirmed: number; unconfirmed: number; total: number }
-    }>
-    signTransaction(
-        txHex: string,
-        inputInfos: {
-            inputIndex: number
-            scriptHex: string
-            satoshis: number
-            sighashType: number
-            address: number | string
-        }[]
-    ): Promise<SigResult[]>
-}
-
-interface SigResult {
-    sig: string
-    publicKey: string
-}
-
-export class SensiletSigner extends Signer {
-    static readonly DEBUG_TAG = 'SensiletSigner'
-    private _target: SensiletWalletAPI
+export class NeucronSigner extends Signer {
+    static readonly DEBUG_TAG = 'NeucronSigner'
+    private _target: INeucronWalletAPI
     private _address: AddressOption
 
     constructor(provider: Provider) {
         super(provider)
         if (typeof (window as any).sensilet !== 'undefined') {
-            console.log(SensiletSigner.DEBUG_TAG, 'Sensilet is installed!')
+            console.log(NeucronSigner.DEBUG_TAG, 'neucron is installed!')
+            // TODO: REPLACE LINE 31 WITH NEUCRON INSTANCE
             this._target = (window as any).sensilet
         } else {
-            console.warn(SensiletSigner.DEBUG_TAG, 'sensilet is not installed')
+            console.warn(NeucronSigner.DEBUG_TAG, 'neucron is not installed')
         }
     }
 
@@ -103,7 +64,7 @@ export class SensiletSigner extends Signer {
         return Promise.resolve({ isAuthenticated, error })
     }
 
-    private async getConnectedTarget(): Promise<SensiletWalletAPI> {
+    private async getConnectedTarget(): Promise<INeucronWalletAPI> {
         const isAuthenticated = await this.isAuthenticated()
         if (!isAuthenticated) {
             // trigger connecting to sensilet account when it's not authorized.
