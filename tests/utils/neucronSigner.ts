@@ -25,10 +25,10 @@ export class NeucronSigner extends Signer {
 
     constructor(provider: Provider) {
         super(provider)
-        if (typeof (window as any).sensilet !== 'undefined') {
+        if (typeof (window as any).neucron !== 'undefined') {
             console.log(NeucronSigner.DEBUG_TAG, 'neucron is installed!')
             // TODO: REPLACE LINE 31 WITH NEUCRON INSTANCE
-            this._target = (window as any).sensilet
+            this._target = (window as any).neucron
         } else {
             console.warn(NeucronSigner.DEBUG_TAG, 'neucron is not installed')
         }
@@ -67,23 +67,23 @@ export class NeucronSigner extends Signer {
     private async getConnectedTarget(): Promise<INeucronWalletAPI> {
         const isAuthenticated = await this.isAuthenticated()
         if (!isAuthenticated) {
-            // trigger connecting to sensilet account when it's not authorized.
+            // trigger connecting to neucron account when it's not authorized.
             try {
                 const addr = await this._target.requestAccount()
                 this._address = bsv.Address.fromString(addr)
             } catch (e) {
-                throw new Error('Sensilet requestAccount failed')
+                throw new Error('neucron requestAccount failed')
             }
         }
         return this._target
     }
 
     override async connect(provider?: Provider): Promise<this> {
-        // we should make sure sensilet is connected  before we connect a provider.
+        // we should make sure neucron is connected  before we connect a provider.
         const isAuthenticated = await this.isAuthenticated()
 
         if (!isAuthenticated) {
-            throw new Error('Sensilet is not connected!')
+            throw new Error('neucron is not connected!')
         }
 
         if (provider) {
@@ -103,8 +103,8 @@ export class NeucronSigner extends Signer {
     }
 
     override async getDefaultAddress(): Promise<bsv.Address> {
-        const sensilet = await this.getConnectedTarget()
-        const address = await sensilet.getAddress()
+        const neucron = await this.getConnectedTarget()
+        const address = await neucron.getAddress()
         return bsv.Address.fromString(address)
     }
 
@@ -125,8 +125,8 @@ export class NeucronSigner extends Signer {
     }
 
     override async getDefaultPubKey(): Promise<PublicKey> {
-        const sensilet = await this.getConnectedTarget()
-        const pubKey = await sensilet.getPublicKey()
+        const neucron = await this.getConnectedTarget()
+        const pubKey = await neucron.getPublicKey()
         return Promise.resolve(new bsv.PublicKey(pubKey))
     }
 
@@ -227,8 +227,8 @@ export class NeucronSigner extends Signer {
                 `${this.constructor.name}#signMessge with \`address\` param is not supported!`
             )
         }
-        const sensilet = await this.getConnectedTarget()
-        return sensilet.signMessage(message)
+        const neucron = await this.getConnectedTarget()
+        return neucron.signMessage(message)
     }
 
     override async getSignatures(
