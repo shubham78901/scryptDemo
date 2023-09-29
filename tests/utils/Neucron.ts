@@ -5,7 +5,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
     authToken: string
 
     exitAccount(): void {
-        this.authToken = null
+        this.authToken = ''
     }
 
     login = async (email: string, password: string): Promise<string | null> => {

@@ -259,8 +259,8 @@ export class NeucronSigner extends Signer {
             })
         })
 
-        const sensilet = await this.getConnectedTarget()
-        const sigResults = await sensilet.signTx({
+        const neucron = await this.getConnectedTarget()
+        const sigResults = await neucron.signTx({
             list: inputInfos,
         })
 
