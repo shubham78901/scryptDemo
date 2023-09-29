@@ -1,6 +1,6 @@
 import { sha256, toByteString, DefaultProvider } from 'scrypt-ts'
 import { HelloWorld } from './src/contracts/helloWorld'
-import { getDefaultSigner, inputSatoshis } from './tests/utils/helper'
+import {  inputSatoshis } from './tests/utils/helper'
 import { NeucronSigner } from './tests/utils/neucronSigner'
 
 ;(async () => {
