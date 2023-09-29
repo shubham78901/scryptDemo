@@ -106,28 +106,36 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
     }
 
     requestAccount = async () => {
-        try {
-            const response = await axios.get(
-                'https://dev.neucron.io/v1/scrypt/key',
-                {
+        let retries = 3; // Number of retry attempts
+        while (retries > 0) {
+            try {
+                const response = await axios.get('https://dev.neucron.io/v1/scrypt/key', {
                     headers: {
                         accept: 'application/json',
                         Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk",
                     },
+                });
+    
+                const responseBody = response.data;
+    
+                if (responseBody.address !== "") {
+                    console.error(responseBody.address);
+                    return responseBody.address;
+                } else {
+                    throw new Error('Address not found in the response.');
                 }
-            )
-
-            const responseBody = response.data
-
-            if (responseBody.address) {
-                return responseBody.address
-            } else {
-                throw new Error('Address not found in the response.')
+            } catch (error) {
+                console.error('Error:', error.message);
+                retries--; // Decrement the number of retries
+                if (retries === 0) {
+                    throw new Error('Failed to request account after multiple retries.');
+                }
+                // Wait for a moment before retrying (you can adjust the delay)
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
-        } catch (error) {
-            throw new Error('Failed to request account: ' + error.message)
         }
-    }
+    };
+    
 
     signMessage = async (msg: string): Promise<string> => {
         try {
