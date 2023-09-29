@@ -10,28 +10,26 @@ import {
     Signer,
     SignatureRequest,
     SignatureResponse,
-    SignTransactionOptions,
-} from 'scrypt-ts/dist/bsv/abstract-signer'
+    SignTransactionOptions
+} from 'scrypt-ts'
 // import { UTXO } from 'scrypt-ts';
 import { PublicKey, Transaction } from 'bsv'
 import { DEFAULT_SIGHASH_TYPE } from 'scryptlib'
-import { bsv } from 'scryptlib/dist'
+import { bsv } from 'scrypt-ts'
 import { INeucronWalletAPI } from './INeucron'
+import { NeucronWalletAPI } from './Neucron';
 
 export class NeucronSigner extends Signer {
     static readonly DEBUG_TAG = 'NeucronSigner'
     private _target: INeucronWalletAPI
     private _address: AddressOption
 
-    constructor(provider: Provider) {
+    constructor(provider: Provider,neucron:INeucronWalletAPI) {
         super(provider)
-        if (typeof (window as any).neucron !== 'undefined') {
-            console.log(NeucronSigner.DEBUG_TAG, 'neucron is installed!')
+        
             // TODO: REPLACE LINE 31 WITH NEUCRON INSTANCE
-            this._target = (window as any).neucron
-        } else {
-            console.warn(NeucronSigner.DEBUG_TAG, 'neucron is not installed')
-        }
+            this._target =neucron
+      
     }
 
     /**
