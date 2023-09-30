@@ -226,7 +226,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
         while (retries > 0) {
             try {
                 const requestBody = options;
-               
+               console.log(requestBody)
                 const response = await axios.post(
                     'https://dev.neucron.io/v1/scrypt/signtxl',
                     requestBody,

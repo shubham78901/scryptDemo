@@ -18,7 +18,7 @@ import { NeucronSigner } from './tests/utils/neucronSigner'
 
     await helloWorld.connect(nec_signer)
     // contract deployment
-    const deployTx = await helloWorld.deploy(1)
+    const deployTx = await helloWorld.deploy(100)
     console.log('HelloWorld contract deployed: ', deployTx.id)
 
     // contract call
