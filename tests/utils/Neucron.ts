@@ -208,7 +208,6 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
             throw new Error('Failed to sign transaction: ' + error.message)
         }
     }
-
     signTx = async (options: {
         list: {
             txHex: string
@@ -221,30 +220,42 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
     }): Promise<{
         sigList: Array<{ publicKey: string; r: string; s: string; sig: string }>
     }> => {
-        try {
-            const requestBody = options
-
-            const response = await axios.post(
-                'https://dev.neucron.io/scrypt/signtxl',
-                requestBody,
-                {
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: this.authToken,
-                        'Content-Type': 'application/json',
-                    },
+        let retries = 3; // Number of retry attempts
+    
+        while (retries > 0) {
+            try {
+                const requestBody = options;
+    
+                const response = await axios.post(
+                    'https://dev.neucron.io/scrypt/signtxl',
+                    requestBody,
+                    {
+                        headers: {
+                            accept: 'application/json',
+                            Authorization: this.authToken,
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+    
+                const responseBody = response.data;
+                console.log(response.data)
+                if (responseBody.sigList) {
+                   
+                    return { sigList: responseBody.sigList };
+                } else {
+                    throw new Error('Invalid response structure.');
                 }
-            )
-
-            const responseBody = response.data
-
-            if (responseBody.sigList) {
-                return { sigList: responseBody.sigList }
-            } else {
-                throw new Error('Invalid response structure.')
+            } catch (error) {
+                console.error('Error:', error.message);
+                retries--; // Decrement the number of retries
+                if (retries === 0) {
+                    throw new Error('Failed to sign the transaction after multiple retries.');
+                }
+                // Wait for a moment before retrying (you can adjust the delay)
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
-        } catch (error) {
-            throw new Error('Failed to sign the transaction: ' + error.message)
         }
-    }
+    };
+    
 }
