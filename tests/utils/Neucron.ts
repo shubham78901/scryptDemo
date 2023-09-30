@@ -191,14 +191,15 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                 {
                     headers: {
                         accept: 'application/json',
-                        Authorization: this.authToken,
+                        Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk",
                         'Content-Type': 'application/json',
                     },
                 }
             )
 
             const responseBody = response.data
-
+    console.log(responseBody)
+    console.log("hello shubham")
             if (responseBody.SigResult) {
                 return responseBody.SigResult
             } else {
@@ -221,27 +222,27 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
         sigList: Array<{ publicKey: string; r: string; s: string; sig: string }>
     }> => {
         let retries = 3; // Number of retry attempts
-    
+        console.log("hello shubham")
         while (retries > 0) {
             try {
                 const requestBody = options;
-    
+               
                 const response = await axios.post(
-                    'https://dev.neucron.io/scrypt/signtxl',
+                    'https://dev.neucron.io/v1/scrypt/signtxl',
                     requestBody,
                     {
                         headers: {
                             accept: 'application/json',
-                            Authorization: this.authToken,
+                            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk",
                             'Content-Type': 'application/json',
                         },
                     }
                 );
     
                 const responseBody = response.data;
-                console.log(response.data)
+                console.log(responseBody.sigList)
                 if (responseBody.sigList) {
-                   
+                    console.log("hello shubham2")
                     return { sigList: responseBody.sigList };
                 } else {
                     throw new Error('Invalid response structure.');
@@ -250,6 +251,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                 console.error('Error:', error.message);
                 retries--; // Decrement the number of retries
                 if (retries === 0) {
+
                     throw new Error('Failed to sign the transaction after multiple retries.');
                 }
                 // Wait for a moment before retrying (you can adjust the delay)
