@@ -1,11 +1,12 @@
-import { sha256, toByteString, DefaultProvider,bsv,MethodCallOptions, Scrypt, FixedArray } from 'scrypt-ts'
+import { sha256, toByteString, DefaultProvider,bsv,MethodCallOptions, PubKeyHash, toHex, PubKey, findSig } from 'scrypt-ts'
 import { HelloWorld } from './src/contracts/helloWorld'
 import { Counter } from './src/contracts/counter'
-import {  getRandomInt, inputSatoshis, sleep } from './tests/utils/helper'
+import { P2PKH } from './src/contracts/p2pkh'
+import {  inputSatoshis, sleep } from './tests/utils/helper'
 import { NeucronSigner } from './tests/utils/neucronSigner'
-import { CandidateName, Voting, N } from './src/contracts/voting'
 
 ;import { NeucronWalletAPI } from './tests/utils/Neucron';
+// import { myPublicKeyHash, myPublicKey } from './tests/utils/privateKey';
 (async () => {
 //     const message = 'hello world, sCrypt!'
 //     await HelloWorld.compile()
@@ -33,86 +34,38 @@ import { CandidateName, Voting, N } from './src/contracts/voting'
 
 
 
-
-
-
-
-
-
-
-
-
-
-await Voting.compile()
-
-
-    const neucron=new NeucronWalletAPI()
+const neucron=new NeucronWalletAPI()
    neucron.authToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk"
     const nec_signer = new NeucronSigner(new DefaultProvider(),neucron)
 
+    const myPublicKey=await nec_signer.getDefaultPubKey()
+    const myPublicKeyHash=bsv.crypto.Hash.sha256ripemd160(myPublicKey.toBuffer())
+await P2PKH.compile()
+const p2pkh = new P2PKH(PubKeyHash(toHex(myPublicKeyHash)))
 
+// connect to a signer
+await p2pkh.connect(nec_signer)
 
+// deploy
+const deployTx = await p2pkh.deploy(inputSatoshis)
+console.log('P2PKH contract deployed: ', deployTx.id)
 
-const candidateNames: FixedArray<CandidateName, typeof N> = [
-    toByteString('candidate1', true),
-    toByteString('candidate2', true),
-    toByteString('candidate3', true),
-    toByteString('candidate4', true),
-    toByteString('candidate5', true),
-    toByteString('candidate6', true),
-    toByteString('candidate7', true),
-    toByteString('candidate8', true),
-    toByteString('candidate9', true),
-    toByteString('candidate10', true),
-]
-
-const voting = new Voting(candidateNames)
-await voting.connect(nec_signer)
-
-const balance = 1
-
-const deployTx = await voting.deploy(balance)
-console.log('contract Voting deployed: ', deployTx.id)
-sleep(1)
-const contract_id = {
-    /** The deployment transaction id */
-    txId: deployTx.id,
-    /** The output index */
-    outputIndex: 0,
-}
-
-// call the method of current instance to apply the updates on chain
-for (let i = 0; i < 5; ++i) {
-    const currentInstance = await Scrypt.contractApi.getLatestInstance(
-        Voting,
-        contract_id
-    )
-
-    await currentInstance.connect(nec_signer)
-    // create the next instance from the current
-    const nextInstance = currentInstance.next()
-
-    const candidateName = candidateNames[getRandomInt(0, N)]
-
-    // read votes Received
-    const count = currentInstance.candidates.find(
-        (candidate) => candidate.name === candidateName
-    )?.votesReceived
-    console.log(`${candidateName}'s vote count: ${count}`)
-
-    // update state
-    nextInstance.increaseVotesReceived(candidateName)
-
-    // call the method of current instance to apply the updates on chain
-    const { tx: tx_i } = await currentInstance.methods.vote(candidateName, {
-        next: {
-            instance: nextInstance,
-            balance,
-        },
-    } as MethodCallOptions<Voting>)
-
-    console.log(`Voting call tx: ${tx_i.id}`)
-    sleep(1)
-
-    }
+// call
+const { tx: callTx } = await p2pkh.methods.unlock(
+    // pass signature, the first parameter, to `unlock`
+    // after the signer signs the transaction, the signatures are returned in `SignatureResponse[]`
+    // you need to find the signature or signatures you want in the return through the public key or address
+    // here we use `myPublicKey` to find the signature because we signed the transaction with `myPrivateKey` before
+    (sigResps) => findSig(sigResps, myPublicKey),
+    // pass public key, the second parameter, to `unlock`
+    PubKey(toHex(myPublicKey)),
+    // method call options
+    {
+        // tell the signer to use the private key corresponding to `myPublicKey` to sign this transaction
+        // that is using `myPrivateKey` to sign the transaction
+        pubKeyOrAddrToSign: myPublicKey,
+    } as MethodCallOptions<P2PKH>
+)
+console.log('P2PKH contract called: ', callTx.id)
+    
 })()
