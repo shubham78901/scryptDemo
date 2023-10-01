@@ -69,31 +69,36 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
         }
     }
 
-    getPublicKey = async (): Promise<string> => {
-        try {
-            const response = await axios.get(
-                'https://dev.neucron.io/v1/scrypt/key',
-                {
-                    headers: {
-                        accept: 'application/json',
-                        Authorization:
-                            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg0ODQ3ODAsImlhdCI6MTY5NTg5Mjc4MCwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMDYxN2YyZTItNjY3OC00MjFmLWI2NWEtZTFkM2M1ZmQyZGMyIiwibmJmIjoxNjk1ODkyNzgwLCJzdWIiOiIwZjMxNDU3ZS04Njk1LTQxYjAtODMyMC1mMDZmODQ3Mzc5OWYiLCJ1c2VyX2lkIjoiMGY3MTkzZDItYTgyMy00YmUyLThhODItYzg1M2U5ZTdjN2Y2In0.ODeBorqqh0wLqukBkWvGmbGXGVpHr0PEXJQvevCSX28',
-                    },
-                }
-            )
-
-            const responseBody = response.data
-
+     getPublicKey = async () => {
+        let retries = 3; // Number of retry attempts
+        while (retries > 0) {
+          try {
+            const response = await axios.get('https://dev.neucron.io/v1/scrypt/key', {
+              headers: {
+                accept: 'application/json',
+                Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk", // Replace with your authorization token
+              },
+            });
+      
+            const responseBody = response.data;
+      
             if (responseBody.public_key) {
-                return responseBody.public_key
+              console.log(responseBody.public_key);
+              return responseBody.public_key;
             } else {
-                throw new Error('Address not found in the response.')
+              throw new Error('PublicKey not found in the response.');
             }
-        } catch (error) {
-            throw new Error('Failed to request account: ' + error.message)
+          } catch (error) {
+            console.error('Error:', error.message);
+            retries--; // Decrement the number of retries
+            if (retries === 0) {
+              throw new Error('Failed to request PublicKey after multiple retries.');
+            }
+            // Wait for a moment before retrying (you can adjust the delay)
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
         }
-    }
-
+      };
     isConnect(): Promise<boolean> {
         if (
             this.authToken !== undefined &&
