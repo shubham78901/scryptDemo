@@ -83,13 +83,13 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
             const responseBody = response.data;
       
             if (responseBody.public_key) {
-              console.log(responseBody.public_key);
+             // console.log(responseBody.public_key);
               return responseBody.public_key;
             } else {
               throw new Error('PublicKey not found in the response.');
             }
           } catch (error) {
-            console.error('Error:', error.message);
+           // console.error('Error:', error.message);
             retries--; // Decrement the number of retries
             if (retries === 0) {
               throw new Error('Failed to request PublicKey after multiple retries.');
@@ -124,7 +124,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                 const responseBody = response.data;
     
                 if (responseBody.address !== "") {
-                    console.error(responseBody.address);
+                    //console.error(responseBody.address);
                     return responseBody.address;
                 } else {
                     throw new Error('Address not found in the response.');
@@ -203,8 +203,8 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
             )
 
             const responseBody = response.data
-    console.log(responseBody)
-    console.log("hello shubham")
+   // console.log(responseBody)
+   // console.log("hello shubham")
             if (responseBody.SigResult) {
                 return responseBody.SigResult
             } else {
@@ -227,11 +227,11 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
         sigList: Array<{ publicKey: string; r: string; s: string; sig: string }>
     }> => {
         let retries = 3; // Number of retry attempts
-        console.log("hello shubham")
+      //  console.log("hello shubham")
         while (retries > 0) {
             try {
                 const requestBody = options;
-               console.log(requestBody)
+             //  console.log(requestBody)
                 const response = await axios.post(
                     'https://dev.neucron.io/v1/scrypt/signtxl',
                     requestBody,
@@ -245,9 +245,11 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                 );
     
                 const responseBody = response.data;
-                console.log(responseBody.sigList)
+               // console.log(responseBody.sigList)
                 if (responseBody.sigList) {
-                    console.log("hello shubham2")
+                  
+                  
+                  //  console.log("hello shubham2")
                     return { sigList: responseBody.sigList };
                 } else {
                     throw new Error('Invalid response structure.');

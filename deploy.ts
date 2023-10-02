@@ -47,10 +47,11 @@ const p2pkh = new P2PKH(PubKeyHash(toHex(myPublicKeyHash)))
 await p2pkh.connect(nec_signer)
 
 // deploy
-const deployTx = await p2pkh.deploy(inputSatoshis)
+const deployTx = await p2pkh.deploy(30)
 console.log('P2PKH contract deployed: ', deployTx.id)
 
 // call
+sleep(3)
 const { tx: callTx } = await p2pkh.methods.unlock(
     // pass signature, the first parameter, to `unlock`
     // after the signer signs the transaction, the signatures are returned in `SignatureResponse[]`
