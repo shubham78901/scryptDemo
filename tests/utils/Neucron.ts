@@ -4,6 +4,11 @@ import axios from 'axios'
 export class NeucronWalletAPI implements INeucronWalletAPI {
     authToken: string
 
+    NeucronWalletAPI(authToken:string)
+    {
+        this.authToken=authToken
+    }
+
     exitAccount(): void {
         this.authToken = ''
     }
@@ -51,7 +56,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                     headers: {
                         accept: 'application/json',
                         Authorization:
-                            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg0ODQ3ODAsImlhdCI6MTY5NTg5Mjc4MCwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMDYxN2YyZTItNjY3OC00MjFmLWI2NWEtZTFkM2M1ZmQyZGMyIiwibmJmIjoxNjk1ODkyNzgwLCJzdWIiOiIwZjMxNDU3ZS04Njk1LTQxYjAtODMyMC1mMDZmODQ3Mzc5OWYiLCJ1c2VyX2lkIjoiMGYzMTQ1N2UtODY5NS00MWIwLTgzMjAtZjA2Zjg0NzM7OTlmIn0.ODeBorqqh0wLqukBkWvGmbGXGVpHr0PEXJQvevCSX28',
+                            this.authToken,
                     },
                 }
             )
@@ -76,7 +81,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
             const response = await axios.get('https://dev.neucron.io/v1/scrypt/key', {
               headers: {
                 accept: 'application/json',
-                Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk", // Replace with your authorization token
+                Authorization: this.authToken // Replace with your authorization token
               },
             });
       
@@ -117,7 +122,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                 const response = await axios.get('https://dev.neucron.io/v1/scrypt/key', {
                     headers: {
                         accept: 'application/json',
-                        Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk",
+                        Authorization: this.authToken,
                     },
                 });
     
@@ -196,7 +201,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                 {
                     headers: {
                         accept: 'application/json',
-                        Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk",
+                        Authorization: this.authToken,
                         'Content-Type': 'application/json',
                     },
                 }
@@ -238,7 +243,7 @@ export class NeucronWalletAPI implements INeucronWalletAPI {
                     {
                         headers: {
                             accept: 'application/json',
-                            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk",
+                            Authorization: this.authToken,
                             'Content-Type': 'application/json',
                         },
                     }

@@ -8,30 +8,6 @@ import { NeucronSigner } from './tests/utils/neucronSigner'
 ;import { NeucronWalletAPI } from './tests/utils/Neucron';
 // import { myPublicKeyHash, myPublicKey } from './tests/utils/privateKey';
 (async () => {
-//     const message = 'hello world, sCrypt!'
-//     await HelloWorld.compile()
-//     const helloWorld = new HelloWorld(sha256(toByteString(message, true)))
-
-//     // connect to a signer
-
-//     // declare your signer
-//     const neucron=new NeucronWalletAPI()
-//    neucron.authToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg1NjM3NDIsImlhdCI6MTY5NTk3MTc0MiwiaXNzIjoiaHR0cHM6Ly9uZXVjcm9uLmlvIiwianRpIjoiMzQ2YThlMWMtZGEyOC00NWI0LWJhYTktMzM2M2JiOGExOGU0IiwibmJmIjoxNjk1OTcxNzQyLCJzdWIiOiI0OWFjNjI3MC04OGNkLTQ5YTktODFiMS0xNDY0OTcyZDk3YTQiLCJ1c2VyX2lkIjoiNDlhYzYyNzAtODhjZC00OWE5LTgxYjEtMTQ2NDk3MmQ5N2E0In0.j34j27qSKqSWZziIOJObKNGqkqqhOK87AeePwUoIqFk"
-//     const nec_signer = new NeucronSigner(new DefaultProvider(),neucron)
-
-//     await helloWorld.connect(nec_signer)
-//     // contract deployment
-    
-//     const deployTx = await helloWorld.deploy(10)
-//     console.log('HelloWorld contract deployed: ', deployTx.id)
-
-//     // contract call
-//     sleep(1)
-//     const { tx: callTx } = await helloWorld.methods.unlock(
-//         toByteString(message, true)
-//     )
-//     console.log('HelloWorld contract `unlock` called: ', callTx.id)
-
 
 
 const neucron=new NeucronWalletAPI()
@@ -47,11 +23,12 @@ const p2pkh = new P2PKH(PubKeyHash(toHex(myPublicKeyHash)))
 await p2pkh.connect(nec_signer)
 
 // deploy
-const deployTx = await p2pkh.deploy(30)
+
+const deployTx = await p2pkh.deploy(100)
 console.log('P2PKH contract deployed: ', deployTx.id)
 
 // call
-sleep(3)
+sleep(300)
 const { tx: callTx } = await p2pkh.methods.unlock(
     // pass signature, the first parameter, to `unlock`
     // after the signer signs the transaction, the signatures are returned in `SignatureResponse[]`
