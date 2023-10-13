@@ -6,7 +6,7 @@
   "scripts": {
     "precompile": "rimraf scrypt.index.json && rimraf artifacts",
     "compile": "npx scrypt-cli@latest compile",
-    "pretest": "npm run compile",
+    "pretest": "echo \"No pretest action configured\"",
     "test": "mocha -i -f 'Heavy'",
     "test-all": "mocha --no-timeouts",
     "testnet": "mocha --no-timeouts --config=.mocharc-testnet.json",

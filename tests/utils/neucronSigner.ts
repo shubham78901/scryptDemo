@@ -26,10 +26,10 @@ export class NeucronSigner extends Signer {
 
     constructor(provider: Provider,neucron:INeucronWalletAPI) {
         super(provider)
-        
+
             // TODO: REPLACE LINE 31 WITH NEUCRON INSTANCE
             this._target =neucron
-      
+
     }
 
     /**
@@ -160,6 +160,8 @@ export class NeucronSigner extends Signer {
                 script,
                 satoshis: sigReq.satoshis,
             })
+
+
         })
 
         const signedTx = await this.signTransaction(tx, options)
